@@ -1,0 +1,45 @@
+main {
+    width: 100%;
+    /*background: red;*/
+    max-width: 48rem;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+header {
+    margin-bottom: 0.5rem;
+}
+
+.file-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(100% - 40px);
+    height: 6rem;
+    /*background: blue;*/
+    margin: 0 auto;
+    border-radius: 10px;
+    border: 2px dashed #ccc;
+    transition: 0.25s;
+    font-size: 1.25rem;
+    user-select: none;
+}
+
+.file-area:hover {
+    background-color: #44475A;
+}
+
+.biggie {
+    height: 8.5rem;
+    background-color: #44475A;
+}
+
+.loading-area {
+    color: #6272A4;
+    font-size: 1.2rem;
+    margin-top: 0.25rem;
+    font-style: italic;
+}

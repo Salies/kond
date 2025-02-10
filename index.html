@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>kond - the hemophile demo analyzer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="kond - the hemophile demo analyzer">
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="icon" type="image/png" href="img/favicon.png">
+</head>
+<body>
+    <main>
+        <header>
+            <h1>kond</h1>
+            <h2>the hemophile <b>demo analyzer</b></h2>
+        </header>
+        <div
+            class="file-area"
+            ondrop="dropHandler(event);"
+            ondragover="dragOverHandler(event);"
+            ondragleave="dragLeaveHandler(event);"
+        >
+            drop your demo here
+        </div>
+        <div class="loading-area">
+            <div class="loading-bar"></div>
+            <div class="loading-text">waiting...</div>
+        </div>
+    </main>
+    <script src="js/index.js"></script>
+</body>
+</html>
