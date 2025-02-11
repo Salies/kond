@@ -1,6 +1,3 @@
-console.log("sou o teste")
-
-
 async function run_wasm() {
     await wasm_bindgen('./js/lib/demoparser2_bg.wasm');
     console.log("wasm loaded")
@@ -12,7 +9,8 @@ async function run_wasm() {
         const reader = new FileReader();
         reader.onload = function (event) {
             const data = new Uint8Array(event.target.result);
-            parseDemo(data);
+            const demoData = parseDemo(data);
+            console.log(demoData)
         };
     
         reader.readAsArrayBuffer(file);

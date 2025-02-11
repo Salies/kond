@@ -34,7 +34,7 @@ function parseDemo(data) {
     const playerEvents = [
         "kills_total", "deaths_total", "damage_total",
         "round_win_status", "team_num", "team_rounds_total",
-        "team_score_first_half", "team_score_second_half"];
+        "team_score_first_half", "team_score_second_half", "team_name"];
     let playerData = wasm_bindgen.parseTicks(data, playerEvents, [endMatchTick]);
 
     // before getting the death events, let's get the round win events
@@ -101,14 +101,22 @@ function parseDemo(data) {
     matchData.set("map", headerData.get("map_name"));
     const teamAData = playerData.filter(player => player.get("team_num") === 2)[0];
     const teamBData = playerData.filter(player => player.get("team_num") === 3)[0];
+
+    // check for overtime rounds
+    const teamARounds = teamAData.get("team_rounds_total");
+    const teamBRounds = teamBData.get("team_rounds_total");
+    const teamAOvertimeRoundsWon = teamARounds - 12, teamBOvertimeRoundsWon = teamBRounds - 12;
+
+    matchData.set("teamAName", teamAData.get("team_name"));
+    matchData.set("teamBName", teamBData.get("team_name"));
     matchData.set("teamAPoints", teamAData.get("team_rounds_total"));
     matchData.set("teamBPoints", teamBData.get("team_rounds_total"));
     matchData.set("teamAScoreFirstHalf", teamAData.get("team_score_first_half"));
     matchData.set("teamBScoreFirstHalf", teamBData.get("team_score_first_half"));
     matchData.set("teamAScoreSecondHalf", teamAData.get("team_score_second_half"));
     matchData.set("teamBScoreSecondHalf", teamBData.get("team_score_second_half"));
-    matchData.set("teamAFinalSide", "T");
-    matchData.set("teamBFinalSide", "CT");
+    matchData.set("teamAOvertimeRoundsWon", teamAOvertimeRoundsWon);
+    matchData.set("teamBOvertimeRoundsWon", teamBOvertimeRoundsWon);
     matchData.set("playerData", playerOutput);
 
     return matchData;
