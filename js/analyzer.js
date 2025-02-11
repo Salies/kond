@@ -1,31 +1,41 @@
-function parseDemo(data) {
-    //console.log(wasm_bindgen.listGameEvents(data));
+function calcImpact(propRoundsWithMultikill, openinKillsPerRound, winPctAfterOpeningKill) {
+    return (
+        (propRoundsWithMultikill * 3.73761914) +
+        (openinKillsPerRound * 2.886383) +
+        (winPctAfterOpeningKill * 0.09009486) +
+        0.07304849
+    )
+}
 
+function calcRating(kast, kpr, dpr, impact, adr) {
+    return (
+        (kast * 0.79697728) +
+        (kpr * 0.42331173) +
+        (dpr * -0.39860167) +
+        (impact * 0.2394093) +
+        (adr * 0.00280917) -
+        0.00879399
+    )
+}
+
+function parseDemo(data) {
     const allEvents = wasm_bindgen.parseEvents(
         data,
         ["player_death", "cs_win_panel_match", "round_officially_ended"],
         ["team_num"], ["total_rounds_played", "round_win_status"]
     );
 
-    //console.log(allEvents)
-
     // getting last tick of the match and number of rounds played
     const endMatchEvent = allEvents.filter(event => event.get("event_name") === "cs_win_panel_match")[0];
     const endMatchTick = endMatchEvent.get("tick");
     const gameRoundsPlayed = endMatchEvent.get("total_rounds_played");
 
-    console.log(endMatchTick, gameRoundsPlayed)
-
     // get player data from last tick
-    const playerEvents = ["kills_total", "deaths_total", "damage_total", "round_win_status"];
+    const playerEvents = [
+        "kills_total", "deaths_total", "damage_total",
+        "round_win_status", "team_num", "team_rounds_total",
+        "team_score_first_half", "team_score_second_half"];
     let playerData = wasm_bindgen.parseTicks(data, playerEvents, [endMatchTick]);
-    /*for(let i = 0; i < player_data.length; i++) {
-        player_data[i].set("kpr", player_data[i].get("kills_total") / game_rounds_played);
-        player_data[i].set("dpr", player_data[i].get("deaths_total") / game_rounds_played);
-        player_data[i].set("adr", player_data[i].get("damage_total") / game_rounds_played);
-    }*/
-
-    console.log(playerData[0])
 
     // before getting the death events, let's get the round win events
     // those will be useful later
@@ -39,81 +49,69 @@ function parseDemo(data) {
     lastRoundWinMap.set("total_rounds_played", gameRoundsPlayed);
     lastRoundWinMap.set("round_win_status", lastRoundWinner);
     roundWinEvents.push(lastRoundWinMap);
-    console.log(roundWinEvents)
 
     // now let's get data from the death events
     const deathEvents = allEvents.filter(event => event.get("event_name") === "player_death");
-    /*console.log(death_events)
 
-    // setting up our data structures
-    const multikills = new Map(), openers = new Map(), kastData = new Map();
-    for (let i = 0; i < gameRoundsPlayed; i++) {
-        kastData.set(i, new Map());
-        for(let j = 0; j < playerData.length; j++) {
-            kastData.get(i).set(playerData[j].get("steamid"), false);
-        }
-    }
+    const killFeedData = proccessKillfeed(playerData, deathEvents, roundWinEvents, gameRoundsPlayed);
 
-    console.log(kastData)
-
+    const playerOutput = new Map();
     for(let i = 0; i < playerData.length; i++) {
-        multikills.set(playerData[i].get("steamid"), 0);
-        openers.set(playerData[i].get("steamid"), {
-            total: 0,
-            converted: 0
+        const steamid = playerData[i].get("steamid");
+        const name = playerData[i].get("name");
+        const finalTeam = playerData[i].get("team_num");
+        const kills = playerData[i].get("kills_total");
+        const deaths = playerData[i].get("deaths_total");
+        const kpr = kills / gameRoundsPlayed;
+        const dpr = deaths / gameRoundsPlayed;
+        const diff = kills - deaths;
+        const adr = playerData[i].get("damage_total") / gameRoundsPlayed;
+
+        const pctRoundsWithMk = killFeedData.multikillCount[steamid] / gameRoundsPlayed;
+        const openingKillsPerRound = killFeedData.openers[steamid].total / gameRoundsPlayed;
+        const winPctAfterOpeningKill = killFeedData.openers[steamid].converted / gameRoundsPlayed;
+
+        const impact = calcImpact(pctRoundsWithMk, openingKillsPerRound, winPctAfterOpeningKill);
+
+        const kast = killFeedData.playerKastCount[steamid] / gameRoundsPlayed;
+
+        const rating = calcRating(kast, kpr, dpr, impact, adr);
+
+        playerOutput.set(steamid, {
+            finalTeam,
+            name,
+            kills,
+            deaths,
+            diff,
+            kpr,
+            dpr,
+            adr,
+            pctRoundsWithMk,
+            openingKillsPerRound,
+            winPctAfterOpeningKill,
+            impact,
+            kast,
+            rating
         });
     }
-    let currentRound = -1, attackerVictimMap = new Map(), multikillers = new Map();
 
-    // now let's iterate through the deaths and get a bunch of data!
-    for(let i = 0; i < death_events.length; i++) {
-        //console.log(death_events[i])
-        const attacker = death_events[i].get("attacker_steamid");
-        const victim = death_events[i].get("user_steamid");
+    // getting additional data from the match
+    const headerData = wasm_bindgen.parseHeader(data);
+    const matchData = new Map();
+    matchData.set("map", headerData.get("map_name"));
+    const teamAData = playerData.filter(player => player.get("team_num") === 2)[0];
+    const teamBData = playerData.filter(player => player.get("team_num") === 3)[0];
+    matchData.set("teamAPoints", teamAData.get("team_rounds_total"));
+    matchData.set("teamBPoints", teamBData.get("team_rounds_total"));
+    matchData.set("teamAScoreFirstHalf", teamAData.get("team_score_first_half"));
+    matchData.set("teamBScoreFirstHalf", teamBData.get("team_score_first_half"));
+    matchData.set("teamAScoreSecondHalf", teamAData.get("team_score_second_half"));
+    matchData.set("teamBScoreSecondHalf", teamBData.get("team_score_second_half"));
+    matchData.set("teamAFinalSide", "T");
+    matchData.set("teamBFinalSide", "CT");
+    matchData.set("playerData", playerOutput);
 
-        //console.log(attacker, victim)
-
-        // skip suicides and deaths from the world
-        if (attacker === victim || attacker === undefined || victim === undefined) continue;
-
-        const round = death_events[i].get("total_rounds_played");
-        if (round !== currentRound) {
-            // if the round change, then this is the first kill of the round!
-            // let's register it as an opener
-            const openerSet = openers.get(attacker);
-            openerSet.total += 1;
-            // will their team win this round?
-            // TODO: change this, it's unsafe
-            //const roundWinner = roundWinEvents[round].get("round_win_status");
-            const roundWinner = roundWinEvents.filter(
-                event => event.get("total_rounds_played") === round + 1
-            )[0].get("round_win_status");
-            const playerTeam = death_events[i].get("attacker_team_num");
-            if (roundWinner === playerTeam) openerSet.converted += 1;
-            openers.set(attacker, openerSet);
-            console.log("OPENER", attacker, roundWinner === playerTeam)
-
-            currentRound = round;
-            attackerVictimMap = new Map();
-            multikillers = new Map();
-        }
-
-        // check if attacker is already in the map
-        // if so, add 1 to multikill
-        if (attackerVictimMap.has(attacker)) {
-            if (!multikillers.has(attacker)) {
-                multikills.set(attacker, multikills.get(attacker) + 1);
-                multikillers.set(attacker, true);
-            }
-        } else { 
-            attackerVictimMap.set(attacker, victim);
-        }
-    }
-
-    console.log(multikills);
-    console.log(openers)*/
-
-    proccessKillfeed(playerData, deathEvents, roundWinEvents, gameRoundsPlayed);
+    return matchData;
 }
 
 function proccessKillfeed(playerData, killfeed, roundWinEvents, totalRoundsPlayed) {
@@ -124,7 +122,7 @@ function proccessKillfeed(playerData, killfeed, roundWinEvents, totalRoundsPlaye
 
     let currentRound = -1, roundKillers = [], roundMultikillers = [], multikillCount = {},
     openers = {},
-    lastAttacker = null, lastVictim = null, kastData = {}, players = [];
+    lastAttacker = null, lastVictim = null, kastData = {}, players = [], playerKastCount = {};
 
     for(let i = 0; i < playerData.length; i++) {
         const steamid = playerData[i].get("steamid");
@@ -196,7 +194,14 @@ function proccessKillfeed(playerData, killfeed, roundWinEvents, totalRoundsPlaye
         lastVictim = victim;
     }
 
-    console.log(multikillCount)
-    console.log(openers)
-    console.log(kastData)
+    for(const roundData in kastData) {
+        for(const player in kastData[roundData]) {
+            if (kastData[roundData][player]) {
+                if (!playerKastCount[player]) playerKastCount[player] = 0;
+                playerKastCount[player] += 1;
+            }
+        }
+    }
+
+    return {multikillCount, openers, playerKastCount};
 }
