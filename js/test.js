@@ -12,8 +12,7 @@ async function run_wasm() {
         const reader = new FileReader();
         reader.onload = function (event) {
             const data = new Uint8Array(event.target.result);
-            const playerSpawns = wasm_bindgen.parseEvent(data, "round_freeze_end");
-            console.log(playerSpawns);
+            parseDemo(data);
         };
     
         reader.readAsArrayBuffer(file);
