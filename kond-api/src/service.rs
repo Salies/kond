@@ -1,9 +1,13 @@
-use super::model::{Player,MatchData, MatchDataOut};
-use nanoid::nanoid;
-use rusqlite::{params, Connection, Result};
-use std::collections::HashMap;
+use crate::model::SteamPlayers;
 
-pub fn insert_match(conn: &mut Connection, match_data: &MatchData) -> Result<MatchDataOut> {
+use super::model::{MatchData, MatchDataOut, Player};
+use nanoid::nanoid;
+use rusqlite::{params, Connection};
+use std::collections::HashMap;
+use std::env;
+use serde_json::Value;
+
+pub fn insert_match(conn: &mut Connection, match_data: &MatchData) -> rusqlite::Result<MatchDataOut> {
     let tx = conn.transaction().expect("Failed to start transaction");
 
     let id = nanoid!();
@@ -64,7 +68,7 @@ pub fn insert_match(conn: &mut Connection, match_data: &MatchData) -> Result<Mat
     Ok(MatchDataOut { id })
 }
 
-pub fn retrieve_match_by_id(conn: &mut Connection, match_id: &str) -> Result<MatchData> {
+pub fn retrieve_match_by_id(conn: &mut Connection, match_id: &str) -> rusqlite::Result<MatchData> {
     let mut stmt = conn.prepare("SELECT * FROM match WHERE id = ?1")?;
 
     let match_data = stmt.query_row([match_id], |row| {
@@ -86,9 +90,7 @@ pub fn retrieve_match_by_id(conn: &mut Connection, match_id: &str) -> Result<Mat
     })?;
 
     let mut player_data = HashMap::new();
-    let mut stmt = conn.prepare(
-        "SELECT * FROM player_match WHERE match_id = ?1",
-    )?;
+    let mut stmt = conn.prepare("SELECT * FROM player_match WHERE match_id = ?1")?;
 
     let player_iter = stmt.query_map([match_id], |row| {
         Ok((
@@ -123,4 +125,21 @@ pub fn retrieve_match_by_id(conn: &mut Connection, match_id: &str) -> Result<Mat
 
     // Return the populated MatchData
     Ok(match_data)
+}
+
+pub async fn get_players_from_steam(players_data: &SteamPlayers) -> Result<HashMap<String, Value>, Box<dyn std::error::Error>> {
+    let steam_ids = &players_data.players.join(",");
+    let steam_api_key = env::var("STEAM_API_KEY").expect("STEAM_API_KEY must be set");
+
+    let url = format!(
+        "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002?key={}&steamids={}",
+        steam_api_key, steam_ids
+    );
+
+    let resp = reqwest::get(url)
+        .await?
+        .json::<HashMap<String, Value>>()
+        .await?;
+
+    Ok(resp)
 }
