@@ -55,7 +55,7 @@ function parseDemo(data) {
 
     const killFeedData = proccessKillfeed(playerData, deathEvents, roundWinEvents, gameRoundsPlayed);
 
-    const playerOutput = new Map();
+    const playerOutput = {};
     for(let i = 0; i < playerData.length; i++) {
         const steamid = playerData[i].get("steamid");
         const name = playerData[i].get("name");
@@ -77,8 +77,8 @@ function parseDemo(data) {
 
         const rating = calcRating(kast, kpr, dpr, impact, adr);
 
-        playerOutput.set(steamid, {
-            finalTeam,
+        playerOutput[steamid] =  {
+            final_team: finalTeam,
             name,
             kills,
             deaths,
@@ -86,28 +86,33 @@ function parseDemo(data) {
             kpr,
             dpr,
             adr,
-            pctRoundsWithMk,
-            openingKillsPerRound,
-            winPctAfterOpeningKill,
+            pct_rounds_with_mk: pctRoundsWithMk,
+            opening_kills_per_round: openingKillsPerRound,
+            win_pct_after_opening_kill: winPctAfterOpeningKill,
             impact,
             kast,
             rating
-        });
+        };
     }
 
     // getting additional data from the match
     const headerData = wasm_bindgen.parseHeader(data);
-    const matchData = new Map();
-    matchData.set("map", headerData.get("map_name"));
+    const matchData = {};
+   // matchData.set("map", headerData.get("map_name"));
+    matchData.map = headerData.get("map_name");
     const teamAData = playerData.filter(player => player.get("team_num") === 2)[0];
     const teamBData = playerData.filter(player => player.get("team_num") === 3)[0];
 
     // check for overtime rounds
     const teamARounds = teamAData.get("team_rounds_total");
     const teamBRounds = teamBData.get("team_rounds_total");
-    const teamAOvertimeRoundsWon = teamARounds - 12, teamBOvertimeRoundsWon = teamBRounds - 12;
+    let teamAOvertimeRoundsWon = 0, teamBOvertimeRoundsWon = 0;
+    if (gameRoundsPlayed > 24) {
+        teamAOvertimeRoundsWon = teamARounds - 12;
+        teamBOvertimeRoundsWon = teamBRounds - 12;
+    }
 
-    matchData.set("teamAName", teamAData.get("team_name"));
+    /*matchData.set("teamAName", teamAData.get("team_name"));
     matchData.set("teamBName", teamBData.get("team_name"));
     matchData.set("teamAPoints", teamAData.get("team_rounds_total"));
     matchData.set("teamBPoints", teamBData.get("team_rounds_total"));
@@ -117,7 +122,19 @@ function parseDemo(data) {
     matchData.set("teamBScoreSecondHalf", teamBData.get("team_score_second_half"));
     matchData.set("teamAOvertimeRoundsWon", teamAOvertimeRoundsWon);
     matchData.set("teamBOvertimeRoundsWon", teamBOvertimeRoundsWon);
-    matchData.set("playerData", playerOutput);
+    matchData.set("playerData", playerOutput);*/
+
+    matchData.team_a_name = teamAData.get("team_name");
+    matchData.team_b_name = teamBData.get("team_name");
+    matchData.team_a_score = teamAData.get("team_rounds_total");
+    matchData.team_b_score = teamBData.get("team_rounds_total");
+    matchData.team_a_score_first_half = teamAData.get("team_score_first_half");
+    matchData.team_b_score_first_half = teamBData.get("team_score_first_half");
+    matchData.team_a_score_second_half = teamAData.get("team_score_second_half");
+    matchData.team_b_score_second_half = teamBData.get("team_score_second_half");
+    matchData.team_a_overtime_rounds_won = teamAOvertimeRoundsWon;
+    matchData.team_b_overtime_rounds_won = teamBOvertimeRoundsWon;
+    matchData.player_data = playerOutput;
 
     return matchData;
 }

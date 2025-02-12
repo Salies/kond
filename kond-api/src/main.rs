@@ -2,17 +2,22 @@ mod db;
 mod model;
 mod service;
 
+use actix_cors::Cors;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use dotenv::dotenv;
 use model::SteamPlayers;
 use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
-use dotenv::dotenv;
 
 #[post("/upload")]
-async fn upload_data(data: web::Json<model::MatchData>, pool: web::Data<Pool<SqliteConnectionManager>>) -> impl Responder {
+async fn upload_data(
+    data: web::Json<model::MatchData>,
+    pool: web::Data<Pool<SqliteConnectionManager>>,
+) -> impl Responder {
     let mut conn = pool.get().expect("Failed to get DB connection");
 
-    match service::insert_match(&mut *conn, &data) { // Explicit mutable borrow
+    match service::insert_match(&mut *conn, &data) {
+        // Explicit mutable borrow
         Ok(result) => HttpResponse::Ok().json(result),
         Err(e) => {
             eprintln!("Database error: {:?}", e);
@@ -22,8 +27,10 @@ async fn upload_data(data: web::Json<model::MatchData>, pool: web::Data<Pool<Sql
 }
 
 #[get("/matches/{match_id}")]
-async fn retrieve_match(path: web::Path<String>, pool: web::Data<Pool<SqliteConnectionManager>>) -> impl Responder {
-    print!("bati aqui!");
+async fn retrieve_match(
+    path: web::Path<String>,
+    pool: web::Data<Pool<SqliteConnectionManager>>,
+) -> impl Responder {
     let mut conn = pool.get().expect("Failed to get DB connection");
     let match_id = path.into_inner();
 
@@ -58,6 +65,12 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
+            .wrap(
+                Cors::default()
+                    .allow_any_origin() // Allows requests from any origin (for development)
+                    .allow_any_method()
+                    .allow_any_header(),
+            )
             .app_data(pool_wrapped.clone()) // Pass the connection pool
             .service(upload_data)
             .service(retrieve_match)

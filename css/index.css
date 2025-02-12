@@ -43,3 +43,7 @@ header {
     margin-top: 0.25rem;
     font-style: italic;
 }
+
+#demoFile {
+    display: none;
+}
