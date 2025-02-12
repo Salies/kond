@@ -1,0 +1,174 @@
+header {
+  margin-bottom: 1rem;
+}
+
+header > h3:first-of-type {
+  padding-top: 1rem;
+}
+
+header > h3:last-of-type {
+  padding-top: 0.25rem;
+}
+
+main {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 40rem;
+  background: rgba(255, 0, 0, 0.5);
+  padding: 2rem;
+}
+
+.result {
+  width: 100%;
+  background: rgba(0, 0, 255, 0.5);
+  display: flex;
+  justify-content: space-between;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.result,
+.result section {
+  height: 5rem;
+}
+
+.result section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.result section > br {
+  width: 100%;
+}
+
+.result section:first-of-type,
+.result section:last-of-type {
+  background-color: aqua;
+  width: 5rem;
+}
+
+.full-results {
+  text-align: center;
+}
+
+.table-area {
+  margin: 1rem 0;
+}
+
+.tg {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.tg:first-of-type {
+  margin-bottom: 0.5rem;
+}
+
+.tg-team-name {
+  width: 50%;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.tg-team-name,
+.player-name {
+  padding-left: 0.5rem !important;
+}
+
+.tg td {
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  overflow: hidden;
+  padding: 10px 5px;
+  word-break: normal;
+}
+.tg th {
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  overflow: hidden;
+  padding: 0.75rem 0.5rem;
+  word-break: normal;
+}
+.tg .tg-0lax {
+  text-align: center;
+  width: 10%;
+  vertical-align: middle;
+}
+
+.lineups {
+  padding-top: 0.5rem;
+}
+
+.line-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  background-color: #532727;
+  margin-top: 0.5rem;
+}
+
+.line-title,
+.line {
+  padding: 0.5rem;
+}
+
+.line {
+  background-color: #7eaed6;
+}
+
+.lineups .line {
+  display: flex;
+  justify-content: space-between;
+}
+
+.line-player {
+  display: flex;
+  flex-direction: column;
+}
+
+.line-player img {
+  width: 120px;
+  height: 120px;
+}
+
+.line-player span {
+  font-size: 0.8rem;
+  padding-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+}
+
+.flag {
+  width: 16px !important;
+  height: 12px !important;
+  vertical-align: middle;
+}
+
+.top-player {
+  margin-top: 1.5rem;
+}
+
+.top-player-title {
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  background-color: blueviolet;
+}
+
+.potm {
+  background-color: #8a5085;
+  padding: 0.5rem;
+}
