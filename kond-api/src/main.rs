@@ -3,8 +3,10 @@ mod model;
 mod service;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use model::SteamPlayers;
 use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
+use dotenv::dotenv;
 
 #[post("/upload")]
 async fn upload_data(data: web::Json<model::MatchData>, pool: web::Data<Pool<SqliteConnectionManager>>) -> impl Responder {
@@ -34,8 +36,21 @@ async fn retrieve_match(path: web::Path<String>, pool: web::Data<Pool<SqliteConn
     }
 }
 
+#[post("/players")]
+async fn get_players_from_steam_endpoint(players: web::Json<SteamPlayers>) -> impl Responder {
+    match service::get_players_from_steam(&players).await {
+        Ok(result) => HttpResponse::Ok().json(result),
+        Err(e) => {
+            eprintln!("Steam API error: {:?}", e);
+            HttpResponse::InternalServerError().finish()
+        }
+    }
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    dotenv().ok();
+
     let db_url = "data.db";
     let manager = db::init_db(db_url);
     let pool = Pool::new(manager).expect("Failed to create pool");
@@ -46,6 +61,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(pool_wrapped.clone()) // Pass the connection pool
             .service(upload_data)
             .service(retrieve_match)
+            .service(get_players_from_steam_endpoint)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
