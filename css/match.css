@@ -14,13 +14,13 @@ main {
   margin: 0 auto;
   width: 100%;
   max-width: 40rem;
-  background: rgba(255, 0, 0, 0.5);
   padding: 2rem;
+  background-color: #282a36;
 }
 
 .result {
   width: 100%;
-  background: rgba(0, 0, 255, 0.5);
+  background: hsl(254, 12%, 6%);
   display: flex;
   justify-content: space-between;
   border-radius: 10px;
@@ -44,7 +44,7 @@ main {
 
 .result section:first-of-type,
 .result section:last-of-type {
-  background-color: aqua;
+  background-color: #44475a;
   width: 5rem;
 }
 
@@ -67,6 +67,7 @@ main {
 }
 
 .tg-team-name {
+  font-weight: 800!important;
   width: 50%;
   text-align: left;
   vertical-align: middle;
@@ -77,8 +78,12 @@ main {
   padding-left: 0.5rem !important;
 }
 
+.player-name img {
+  margin-right: 5px;
+}
+
 .tg td {
-  border-color: black;
+  border-color: #44475A;
   border-style: solid;
   border-width: 1px;
   font-family: Arial, sans-serif;
@@ -88,7 +93,7 @@ main {
   word-break: normal;
 }
 .tg th {
-  border-color: black;
+  border-color: #44475A;
   border-style: solid;
   border-width: 1px;
   font-family: Arial, sans-serif;
@@ -111,7 +116,7 @@ main {
 .line-title {
   font-size: 1.25rem;
   font-weight: 600;
-  background-color: #532727;
+  background-color: #6272A4;
   margin-top: 0.5rem;
 }
 
@@ -121,7 +126,7 @@ main {
 }
 
 .line {
-  background-color: #7eaed6;
+  background-color: #44475A;
 }
 
 .lineups .line {
@@ -165,10 +170,36 @@ main {
   gap: 5px;
   padding: 0.5rem;
   margin-top: 0.5rem;
-  background-color: blueviolet;
+  background-color: #6272A4;
 }
 
 .potm {
-  background-color: #8a5085;
+  background-color: #44475A;
   padding: 0.5rem;
+}
+
+#team-a-score,
+#team-b-score {
+  font-weight: 800;
+  font-size: 1.5rem;
+}
+
+.winner {
+  color: #50fa7b;
+}
+
+.loser {
+  color: #ff5555;
+}
+
+.terror {
+    color: #F1FA8C;
+}
+
+.ct {
+    color: #8BE9FD;
+}
+
+.neutral {
+  color: #6272A4;
 }
