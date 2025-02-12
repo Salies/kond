@@ -20,7 +20,7 @@ pub struct Player {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct MatchDataIn {
+pub struct MatchData {
     pub file_hash: String,
     pub map: String,
     pub team_a_name: String,

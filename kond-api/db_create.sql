@@ -14,9 +14,10 @@ CREATE TABLE IF NOT EXISTS match (
   team_b_overtime_rounds_won INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS player_match(
+CREATE TABLE IF NOT EXISTS player_match (
   match_id TEXT NOT NULL,
   steam_id TEXT NOT NULL,
+  player_name TEXT NOT NULL,
   final_team INTEGER NOT NULL,
   kills INTEGER NOT NULL,
   deaths INTEGER NOT NULL,

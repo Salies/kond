@@ -1,7 +1,9 @@
-use rusqlite::{Connection, Result, params};
+use super::model::{Player,MatchData, MatchDataOut};
 use nanoid::nanoid;
+use rusqlite::{params, Connection, Result};
+use std::collections::HashMap;
 
-pub fn insert_match(conn: &mut Connection, match_data: &super::model::MatchDataIn) -> Result<super::model::MatchDataOut> {
+pub fn insert_match(conn: &mut Connection, match_data: &MatchData) -> Result<MatchDataOut> {
     let tx = conn.transaction().expect("Failed to start transaction");
 
     let id = nanoid!();
@@ -33,13 +35,14 @@ pub fn insert_match(conn: &mut Connection, match_data: &super::model::MatchDataI
     // Insert player data
     for (steam_id, player) in &match_data.player_data {
         tx.execute(
-            "INSERT INTO player_match (match_id, steam_id, final_team, kills, deaths, diff, kpr, dpr, 
+            "INSERT INTO player_match (match_id, steam_id, player_name, final_team, kills, deaths, diff, kpr, dpr, 
                                        adr, pct_rounds_with_mk, opening_kills_per_round, win_pct_after_opening_kill, 
                                        impact, kast, rating) 
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)",
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16)",
             params![
                 id, // Foreign key reference to match
                 steam_id,
+                player.name,
                 player.final_team,
                 player.kills,
                 player.deaths,
@@ -58,7 +61,66 @@ pub fn insert_match(conn: &mut Connection, match_data: &super::model::MatchDataI
     }
 
     tx.commit().expect("Failed to commit transaction");
-    Ok(super::model::MatchDataOut {
-        id
-    })
+    Ok(MatchDataOut { id })
+}
+
+pub fn retrieve_match_by_id(conn: &mut Connection, match_id: &str) -> Result<MatchData> {
+    let mut stmt = conn.prepare("SELECT * FROM match WHERE id = ?1")?;
+
+    let match_data = stmt.query_row([match_id], |row| {
+        Ok(MatchData {
+            file_hash: row.get(1)?,
+            map: row.get(2)?,
+            team_a_name: row.get(3)?,
+            team_b_name: row.get(4)?,
+            team_a_score: row.get(5)?,
+            team_b_score: row.get(6)?,
+            team_a_score_first_half: row.get(7)?,
+            team_b_score_first_half: row.get(8)?,
+            team_a_score_second_half: row.get(9)?,
+            team_b_score_second_half: row.get(10)?,
+            team_a_overtime_rounds_won: row.get(11)?,
+            team_b_overtime_rounds_won: row.get(12)?,
+            player_data: HashMap::new(), // we'll fill this later
+        })
+    })?;
+
+    let mut player_data = HashMap::new();
+    let mut stmt = conn.prepare(
+        "SELECT * FROM player_match WHERE match_id = ?1",
+    )?;
+
+    let player_iter = stmt.query_map([match_id], |row| {
+        Ok((
+            row.get::<_, String>(1)?, // steam_id
+            Player {
+                final_team: row.get(3)?,
+                name: row.get(2)?,
+                kills: row.get(4)?,
+                deaths: row.get(5)?,
+                diff: row.get(6)?,
+                kpr: row.get(7)?,
+                dpr: row.get(8)?,
+                adr: row.get(9)?,
+                pct_rounds_with_mk: row.get(10)?,
+                opening_kills_per_round: row.get(11)?,
+                win_pct_after_opening_kill: row.get(12)?,
+                impact: row.get(13)?,
+                kast: row.get(14)?,
+                rating: row.get(15)?,
+            },
+        ))
+    })?;
+
+    for player in player_iter {
+        let (steam_id, player) = player?;
+        player_data.insert(steam_id, player);
+    }
+
+    // Update the match data with the player data
+    let mut match_data = match_data;
+    match_data.player_data = player_data;
+
+    // Return the populated MatchData
+    Ok(match_data)
 }
