@@ -5,42 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Z-Score Bar Chart</title>
     <style>
+        body {
+            background-color: hsl(254, 12%, 6%);
+            color: #F8F8F2;
+        }
+
       .chart-container {
         display: flex;
         justify-content: center;
         align-items: flex-end;
         height: 120px; /* Adjust height as needed */
-        border-left: 2px solid black;
-        width: 430px;
-        border-bottom: 2px solid black;
+        /*border-left: 2px solid black;
+        border-bottom: 2px solid black;*/
+        width: 600px;
         position: relative;
         overflow: hidden; /*hides negative bars that go below the zero line*/
+        margin-top:20px;
       }
 
       .bar {
-        width: 60px;
+        width: 80px;
         margin: 0 5px;
-        background-color: steelblue;
+        background-color: RGB(139, 233, 253);
         transition: height 0.3s ease;
       }
 
       .zero-line {
         position: absolute;
-        width: 100%;
-        height: 2px;
-        background-color: red;
+        width: 95%;
+        height: 1px;
+        background-color: RGBA(248, 248, 242, 0.75);
         z-index: 999;
-        bottom: 50%; /* At 0 Z-score */
+        left: 0;
+        bottom: 50%;
+      }
+      
+      .zero-line::after{
+        content:"Avg";
+        width: 30px;
+        position: absolute;
+        top:-10px;
+        background: hsl(254, 12%, 6%);
       }
 
       .legend {
         display: flex;
-        padding-left:7px;
+        padding-left:30px;
       }
 
       .legend > div {
-        width:60px;
+        width:80px;
         margin: 0 5px;
+        text-align: center;
+        display: flex;
+        height:60px;
+        flex-flow:column;
+        background-color: red;
+        border-radius: 10px;
+        margin-top: 0.25rem;
+        overflow: hidden;
+      }
+
+      .legend > div > span {
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .legend > div > span:first-of-type {
+        font-weight: 900;
+        background-color: RGB(68, 71, 90);
+      }
+
+      .legend > div > span:last-of-type {
+        background-color: RGB(40, 42, 54);
       }
     </style>
   </head>
@@ -49,14 +88,7 @@
       <div class="zero-line"></div>
     </div>
 
-    <div class="legend">
-      <div>KPR</div>
-      <div>DPR</div>
-      <div>KAST</div>
-      <div>Impact</div>
-      <div>ADR</div>
-      <div>Rating 2.1</div>
-    </div>
+    <div class="legend" id="legend"></div>
 
     <script>
       const bestValues = {
@@ -96,13 +128,13 @@
         data.push(zScore(bestValues[key], avg[key], std[key]));
       }
 
-      const legends = ["KPR", "DPR", "KAST", "Impact", "ADR", "Rating 2.1"];
-      const refs = Object.keys(std);
+      const refs = Object.keys(bestValues);
 
       console.log(data);
 
       // Get the chart container
       const chart = document.getElementById("chart");
+      const legend = document.getElementById("legend");
 
       // Find the max absolute Z-score to scale bars properly
       const maxAbsZ = Math.max(...data.map(Math.abs));
@@ -112,6 +144,19 @@
       data.forEach((value) => {
         const bar = document.createElement("div");
         bar.classList.add("bar");
+        /*let vPrint = bestValues[refs[i]].toFixed(2);
+        if (refs[i] == "kast") vPrint = (bestValues[refs[i]] * 100).toFixed(1) + "%";
+        if (refs[i] == "adr") vPrint = bestValues[refs[i]].toFixed(1);
+        console.log(refs[i]);
+        bar.innerHTML = `<span>${vPrint}</span>`; // Display Z-score on bar*/
+
+        const barLegend = document.createElement("div");
+        let vPrint = bestValues[refs[i]].toFixed(2);
+        if (refs[i] == "kast") vPrint = (bestValues[refs[i]] * 100).toFixed(1) + "%";
+        if (refs[i] == "adr") vPrint = bestValues[refs[i]].toFixed(1);
+
+        barLegend.innerHTML = `<span>${refs[i]}</span><span>${vPrint}</span>`;
+        legend.appendChild(barLegend);
 
         // Normalize height (Z-scores centered at zero)
         const barHeight = (Math.abs(value) / maxAbsZ) * 100; // Scale to fit container
