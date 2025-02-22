@@ -20,7 +20,7 @@ pub struct Player {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct MatchData {
+pub struct MatchCreate{
     pub file_hash: String,
     pub map: String,
     pub team_a_name: String,
@@ -37,6 +37,25 @@ pub struct MatchData {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct MatchData {
+    pub file_hash: String,
+    pub map: String,
+    pub team_a_name: String,
+    pub team_b_name: String,
+    pub team_a_score: u8,
+    pub team_b_score: u8,
+    pub team_a_score_first_half: u8,
+    pub team_b_score_first_half: u8,
+    pub team_a_score_second_half: u8,
+    pub team_b_score_second_half: u8,
+    pub team_a_overtime_rounds_won: u8,
+    pub team_b_overtime_rounds_won: u8,
+    pub created_at: String,
+    pub updated_at: String,
+    pub player_data: HashMap<String, Player>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct MatchDataOut {
     pub id: String,
 }
@@ -44,9 +63,4 @@ pub struct MatchDataOut {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SteamPlayers {
     pub players: Vec<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct MatchId {
-    pub id: String,
 }

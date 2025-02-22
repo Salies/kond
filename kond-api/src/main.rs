@@ -12,7 +12,7 @@ use r2d2_sqlite::SqliteConnectionManager;
 // upload match
 #[post("/upload")]
 async fn upload_data(
-    data: web::Json<model::MatchData>,
+    data: web::Json<model::MatchCreate>,
     pool: web::Data<Pool<SqliteConnectionManager>>,
 ) -> impl Responder {
     let mut conn = pool.get().expect("Failed to get DB connection");

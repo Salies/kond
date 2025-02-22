@@ -18,7 +18,9 @@ pub fn init_db(db_url: &str) -> SqliteConnectionManager {
             team_a_score_second_half INTEGER NOT NULL,
             team_b_score_second_half INTEGER NOT NULL,
             team_a_overtime_rounds_won INTEGER NOT NULL,
-            team_b_overtime_rounds_won INTEGER NOT NULL
+            team_b_overtime_rounds_won INTEGER NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
         );",
         (),
     )

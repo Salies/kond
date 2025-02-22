@@ -1,24 +1,28 @@
 use crate::model::SteamPlayers;
 
-use super::model::{MatchData, MatchDataOut, Player, MatchId};
+use super::model::{MatchData, MatchDataOut, Player, MatchCreate};
 use nanoid::nanoid;
 use rusqlite::{params, Connection};
 use std::collections::HashMap;
 use std::env;
 use serde_json::Value;
+use chrono::Utc;
 
-pub fn insert_match(conn: &mut Connection, match_data: &MatchData) -> rusqlite::Result<MatchDataOut> {
+pub fn insert_match(conn: &mut Connection, match_data: &MatchCreate) -> rusqlite::Result<MatchDataOut> {
     let tx = conn.transaction().expect("Failed to start transaction");
 
     let id = nanoid!();
+    let created_at = Utc::now().to_rfc3339();
+    let updated_at = created_at.clone();
 
     // Insert into match table
     tx.execute(
         "INSERT INTO match (id, hash, map, team_a_name, team_b_name, team_a_score, team_b_score,
                             team_a_score_first_half, team_b_score_first_half, 
                             team_a_score_second_half, team_b_score_second_half,
-                            team_a_overtime_rounds_won, team_b_overtime_rounds_won)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)",
+                            team_a_overtime_rounds_won, team_b_overtime_rounds_won,
+                            created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)",
         params![
             id,
             match_data.file_hash,
@@ -32,7 +36,9 @@ pub fn insert_match(conn: &mut Connection, match_data: &MatchData) -> rusqlite::
             match_data.team_a_score_second_half,
             match_data.team_b_score_second_half,
             match_data.team_a_overtime_rounds_won,
-            match_data.team_b_overtime_rounds_won
+            match_data.team_b_overtime_rounds_won,
+            created_at,
+            updated_at
         ],
     )?;
 
@@ -85,6 +91,8 @@ pub fn retrieve_match_by_id(conn: &mut Connection, match_id: &str) -> rusqlite::
             team_b_score_second_half: row.get(10)?,
             team_a_overtime_rounds_won: row.get(11)?,
             team_b_overtime_rounds_won: row.get(12)?,
+            created_at: row.get(13)?,
+            updated_at: row.get(14)?,
             player_data: HashMap::new(), // we'll fill this later
         })
     })?;
@@ -127,11 +135,11 @@ pub fn retrieve_match_by_id(conn: &mut Connection, match_id: &str) -> rusqlite::
     Ok(match_data)
 }
 
-pub fn retrieve_match_id_by_file_hash(conn: &mut Connection, file_hash: &str) -> rusqlite::Result<MatchId> {
+pub fn retrieve_match_id_by_file_hash(conn: &mut Connection, file_hash: &str) -> rusqlite::Result<MatchDataOut> {
     let mut stmt = conn.prepare("SELECT id FROM match WHERE hash = ?1")?;
 
     let match_id = stmt.query_row([file_hash], |row| {
-        Ok(MatchId {
+        Ok(MatchDataOut {
             id: row.get(0)?,
         })
     })?;
