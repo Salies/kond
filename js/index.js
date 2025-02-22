@@ -55,7 +55,6 @@ function parsingSuccessToast() {
   }).showToast();
 }
 
-
 async function processFile(file) {
   parsingDemoToast();
   // wait 1.5 seconds to show the toast
@@ -64,6 +63,22 @@ async function processFile(file) {
   reader.onload = function (e) {
     const data = new Uint8Array(e.target.result);
     hashwasm.md5(data).then((hash) => {
+      // check if demo was already parsed
+      fetch(`http://127.0.0.1:8080/demo/${hash}`)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Failed to fetch demo data");
+          }
+        })
+        .then((data) => {
+          const matchId = data.id;
+          // redirect to /match?id=matchId
+          window.location.href = `/match.html?id=${matchId}`;
+        });
+      // no need to catch error, we just proceed to parse the demo
+
       let demoData;
       try {
         demoData = parseDemo(data);
