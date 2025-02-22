@@ -157,6 +157,7 @@ fetch(`${BASE_URL}/matches/${matchId}`)
     $("#created-at").innerText = matchAddedDate;
 
     $("#map-name").innerText = match.map;
+    applyMap(match.map);
 
     // set title meta
     const _desc = `${match.map} (${match.team_a_score}-${match.team_b_score}) - ${matchAddedDate}`;
