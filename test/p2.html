@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Z-Score Bar Chart</title>
+    <style>
+      .chart-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        height: 120px; /* Adjust height as needed */
+        border-left: 2px solid black;
+        width: 430px;
+        border-bottom: 2px solid black;
+        position: relative;
+        overflow: hidden; /*hides negative bars that go below the zero line*/
+      }
+
+      .bar {
+        width: 60px;
+        margin: 0 5px;
+        background-color: steelblue;
+        transition: height 0.3s ease;
+      }
+
+      .zero-line {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background-color: red;
+        z-index: 999;
+        bottom: 50%; /* At 0 Z-score */
+      }
+
+      .legend {
+        display: flex;
+        padding-left:7px;
+      }
+
+      .legend > div {
+        width:60px;
+        margin: 0 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chart-container" id="chart">
+      <div class="zero-line"></div>
+    </div>
+
+    <div class="legend">
+      <div>KPR</div>
+      <div>DPR</div>
+      <div>KAST</div>
+      <div>Impact</div>
+      <div>ADR</div>
+      <div>Rating 2.1</div>
+    </div>
+
+    <script>
+      const bestValues = {
+        kpr: 1.2857143,
+        dpr: 0.2857143,
+        adr: 104.57143,
+        impact: 2.093661,
+        kast: 0.9285714,
+        rating: 1.9566289,
+      };
+
+      const avg = {
+        kpr: 0.664285731,
+        dpr: 0.664285714,
+        kast: 0.742857143,
+        impact: 1.006926247,
+        adr: 72.83571409999999,
+        rating: 1.045336219,
+      };
+
+      const std = {
+        kpr: 0.21076875906198866,
+        dpr: 0.15096626561410836,
+        kast: 0.08043249110215442,
+        impact: 0.45871921988594216,
+        adr: 16.890184091266683,
+        rating: 0.33678706821400617,
+      };
+
+      function zScore(value, avg, std) {
+        return (value - avg) / std;
+      }
+
+      // Sample Z-score normalized data (these could be any real Z-scores)
+      const data = new Array();
+      for (const key in bestValues) {
+        data.push(zScore(bestValues[key], avg[key], std[key]));
+      }
+
+      const legends = ["KPR", "DPR", "KAST", "Impact", "ADR", "Rating 2.1"];
+      const refs = Object.keys(std);
+
+      console.log(data);
+
+      // Get the chart container
+      const chart = document.getElementById("chart");
+
+      // Find the max absolute Z-score to scale bars properly
+      const maxAbsZ = Math.max(...data.map(Math.abs));
+
+      let i = 0;
+      // Generate bars dynamically
+      data.forEach((value) => {
+        const bar = document.createElement("div");
+        bar.classList.add("bar");
+
+        // Normalize height (Z-scores centered at zero)
+        const barHeight = (Math.abs(value) / maxAbsZ) * 100; // Scale to fit container
+
+        // Position bars (positive values go up, negative values go down)
+        bar.style.height = `${barHeight}%`;
+        bar.style.transform = `translateY(${value < 0 ? 100 - barHeight : 0}%)`; // Push negative bars downward
+
+        // Append to chart
+        chart.appendChild(bar);
+
+        i++;
+      });
+    </script>
+  </body>
+</html>
