@@ -44,11 +44,6 @@ header {
     font-style: italic;
 }
 
-.hidden {
-    height: 0;
-    opacity: 0;
-}
-
 #loading-bar, #insert-file-area, .file-area {
     transition: 0.25s all;
 }

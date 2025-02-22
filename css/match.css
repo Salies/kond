@@ -6,7 +6,7 @@ header > h3:first-of-type {
   padding-top: 1rem;
 }
 
-header, main, footer {
+header, main, footer, #loading {
   margin: 0 auto;
   width: 100%;
   max-width: 40rem;
@@ -16,6 +16,7 @@ main {
   padding: 2rem;
   border-radius: 10px;
   background-color: #282a36;
+  transition: .5s all;
 }
 
 .result {
@@ -237,4 +238,8 @@ table {
 
 footer {
   padding:2rem 0;
+}
+
+h1 > a:hover {
+  color: #F8F8F2;
 }

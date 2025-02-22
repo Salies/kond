@@ -5,8 +5,12 @@ if (!matchId) {
   window.location.href = "/";
 }
 
+function pageAppear(){
+  $('#loading').classList.add('hidden');
+  $('main').classList.remove('hidden');
+}
+
 function fillArray(n, startWord) {
-  //const opposite = startWord == "ct" ? "terror" : "ct";
   let array = new Array(n);
   const words = ["terror", "ct"];
   let idx = words.indexOf(startWord);
@@ -157,6 +161,7 @@ fetch(`http://127.0.0.1:8080/matches/${matchId}`)
     // set title meta
     const _desc = `${match.map} (${match.team_a_score}-${match.team_b_score}) - ${matchAddedDate}`;
     $('meta[property="og:title"]').setAttribute("content", _desc);
+    $('title').innerText = 'kond - ' + _desc;
 
     $("#team-a-score").innerText = match.team_a_score;
     $("#team-b-score").innerText = match.team_b_score;
@@ -309,15 +314,6 @@ fetch(`http://127.0.0.1:8080/matches/${matchId}`)
           adr: bestPlayer.adr,
           rating: bestPlayer.rating,
         }, avgs, std);
-        
-        /*let referenceValues = structuredClone(bestPlayer);
-        referenceValues.kpr += 0.2;
-        referenceValues.dpr += 0.2;
-        referenceValues.kast += 0.1;
-        referenceValues.impact += 0.5;
-        referenceValues.adr += 5;
-        referenceValues.rating += 0.2;
-        console.log('ref', referenceValues)*/
 
         $("#best-player-name").innerHTML = processRealName(
           bestPlayer.real_name,
@@ -333,9 +329,11 @@ fetch(`http://127.0.0.1:8080/matches/${matchId}`)
 
         if(bestPlayer.avatar) $("#best-player-potm > img").src = bestPlayer.avatar;
 
+        pageAppear();
       })
       .catch((error) => {
         console.error(error);
+        pageAppear(); // non-blocking error
       });
   })
   .catch((error) => {

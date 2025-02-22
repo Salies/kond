@@ -34,3 +34,9 @@ a:hover {
     color: #F1FA8C;
     text-decoration: underline;
 }
+
+.hidden {
+    height: 0;
+    opacity: 0;
+    padding:0;
+}
