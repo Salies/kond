@@ -149,8 +149,14 @@ fetch(`http://127.0.0.1:8080/matches/${matchId}`)
 
     $("#match-id").innerText = matchId;
     $("#file-hash").innerText = match.file_hash;
+    const matchAddedDate = new Date(match.created_at).toLocaleString();
+    $("#created-at").innerText = matchAddedDate;
 
     $("#map-name").innerText = match.map;
+
+    // set title meta
+    const _desc = `${match.map} (${match.team_a_score}-${match.team_b_score}) - ${matchAddedDate}`;
+    $('meta[property="og:title"]').setAttribute("content", _desc);
 
     $("#team-a-score").innerText = match.team_a_score;
     $("#team-b-score").innerText = match.team_b_score;

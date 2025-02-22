@@ -6,10 +6,6 @@ header > h3:first-of-type {
   padding-top: 1rem;
 }
 
-header > h3:last-of-type {
-  padding-top: 0.25rem;
-}
-
 main {
   margin: 0 auto;
   width: 100%;
