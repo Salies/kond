@@ -1,2 +1,2 @@
 # kond
-Pro analytics for you CS2 demos
+Pro analytics for your CS2 demos.
