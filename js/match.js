@@ -223,6 +223,17 @@ fetch(`http://127.0.0.1:8080/matches/${matchId}`)
       })
       .then((playerData) => {
         const players = playerData.response.players;
+        let avgs = {
+          kpr: 0,
+          dpr: 0,
+          kast: 0,
+          impact: 0,
+          adr: 0,
+          rating: 0,
+        };
+
+        let std = structuredClone(avgs);
+
         for (let i = 0; i < players.length; i++) {
           const player = players[i];
           match.player_data[player.steamid].name = player.personaname;
@@ -233,7 +244,23 @@ fetch(`http://127.0.0.1:8080/matches/${matchId}`)
           match.player_data[player.steamid].country = player.loccountrycode;
           match.player_data[player.steamid].profile_url = player.profileurl;
           match.player_data[player.steamid].real_name = player.realname;
+
+          avgs.kpr += match.player_data[player.steamid].kpr;
+          avgs.dpr += match.player_data[player.steamid].dpr;
+          avgs.kast += match.player_data[player.steamid].kast;
+          avgs.impact += match.player_data[player.steamid].impact;
+          avgs.adr += match.player_data[player.steamid].adr;
+          avgs.rating += match.player_data[player.steamid].rating;
         }
+
+        avgs.kpr /= players.length;
+        avgs.dpr /= players.length;
+        avgs.kast /= players.length;
+        avgs.impact /= players.length;
+        avgs.adr /= players.length;
+        avgs.rating /= players.length;
+
+        console.log('avg', avgs);
 
         const teamsTbody = getTeamsTbody(teamA, teamB);
         $("#team-a-players").innerHTML = teamsTbody[0];
@@ -252,8 +279,45 @@ fetch(`http://127.0.0.1:8080/matches/${matchId}`)
           if (match.player_data[p].rating > bestRating) {
             bestRating = match.player_data[p].rating;
             bestPlayer = match.player_data[p];
+
+            // add to std
+            std.kpr += Math.pow(match.player_data[p].kpr - avgs.kpr, 2);
+            std.dpr += Math.pow(match.player_data[p].dpr - avgs.dpr, 2);
+            std.kast += Math.pow(match.player_data[p].kast - avgs.kast, 2);
+            std.impact += Math.pow(match.player_data[p].impact - avgs.impact, 2);
+            std.adr += Math.pow(match.player_data[p].adr - avgs.adr, 2);
+            std.rating += Math.pow(match.player_data[p].rating - avgs.rating, 2);
           }
         }
+
+        std.kpr = Math.sqrt(std.kpr / players.length);
+        std.dpr = Math.sqrt(std.dpr / players.length);
+        std.kast = Math.sqrt(std.kast / players.length);
+        std.impact = Math.sqrt(std.impact / players.length);
+        std.adr = Math.sqrt(std.adr / players.length);
+        std.rating = Math.sqrt(std.rating / players.length);
+
+        console.log('best', bestPlayer)
+
+        console.log('std', std)
+
+        updatePotm({
+          kpr: bestPlayer.kpr,
+          dpr: bestPlayer.dpr,
+          kast: bestPlayer.kast,
+          impact: bestPlayer.impact,
+          adr: bestPlayer.adr,
+          rating: bestPlayer.rating,
+        }, avgs, std);
+        
+        /*let referenceValues = structuredClone(bestPlayer);
+        referenceValues.kpr += 0.2;
+        referenceValues.dpr += 0.2;
+        referenceValues.kast += 0.1;
+        referenceValues.impact += 0.5;
+        referenceValues.adr += 5;
+        referenceValues.rating += 0.2;
+        console.log('ref', referenceValues)*/
 
         $("#best-player-name").innerHTML = processRealName(
           bestPlayer.real_name,
@@ -267,9 +331,8 @@ fetch(`http://127.0.0.1:8080/matches/${matchId}`)
             alt="${bestPlayer.country}">`;
         }
 
-        $("#best-player-potm").innerHTML = `<img
-            src="${bestPlayer.avatar}"
-            alt="Player of the match">`;
+        if(bestPlayer.avatar) $("#best-player-potm > img").src = bestPlayer.avatar;
+
       })
       .catch((error) => {
         console.error(error);

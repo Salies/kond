@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/reset.css" />
     <link rel="stylesheet" type="text/css" href="css/main.css" />
     <link rel="stylesheet" type="text/css" href="css/match.css" />
+    <link rel="stylesheet" type="text/css" href="css/potm.css" />
 
     <meta property="og:title" content="" />
     <meta property="og:type" content="website" />
@@ -18,14 +19,14 @@
     <meta name="theme-color" content="#BD93F9">
   </head>
   <body>
+    <header>
+      <h1>kond</h1>
+      <h2>the <a href="" target="_blank" id="goat">🐐</a> demo analyzer</h2>
+      <h3><b>match id:</b> <span id="match-id"></span></h3>
+      <h3><b>demo hash:</b> <span id="file-hash"></span></h3>
+      <h3><b>added in:</b> <span id="created-at"></span></h3>
+    </header>
     <main>
-      <header>
-        <h1>kond</h1>
-        <h2>the <a href="" target="_blank" id="goat">🐐</a> demo analyzer</h2>
-        <h3><b>match id:</b> <span id="match-id"></span></h3>
-        <h3><b>demo hash:</b> <span id="file-hash"></span></h3>
-        <h3><b>added in:</b> <span id="created-at"></span></h3>
-      </header>
       <div class="result">
         <section id="team-a-score"></section>
         <section>
@@ -77,19 +78,37 @@
       </div>
 
       <div class="top-player">
-        <h2>Top player in the match</h2>
+        <h2>Player of the match</h2>
         <div class="top-player-title">
             <span id="best-player-flag"></span>
-            <span id="best-player-name">donk</span>
+            <span id="best-player-name"></span>
         </div>
         <div class="potm" id="best-player-potm">
             <img
-              src="https://avatars.fastly.steamstatic.com/0aa89f45adde626f3cab206aefad5d0f64cee6ae_full.jpg"
+              src=""
+              alt="Player of the match"
             />
+            <div class="potm-stats">
+              <div class="chart-container" id="chart">
+                  <div class="zero-line"></div>
+                </div>
+              <div id="legend"></div>
+              <div id="legend-names"></div>
+          </div>
         </div>
       </div>
     </main>
+
+    <footer>
+      made in
+      <a href="https://www.youtube.com/watch?v=0T0xXVY-WO0" target="_blank"><img src="https://flagcdn.com/w20/br.png"></a>
+      with
+      <a href="https://www.youtube.com/watch?v=yfORoQIqB3E" target="_blank" style="text-decoration: none;">😡</a>
+      by <a href="https://github.com/Salies" target="_blank">Salies</a>
+    </footer>
+
     <script src="js/match.js"></script>
     <script src="js/goat.js"></script>
+    <script src="js/potm.js"></script>
   </body>
 </html>

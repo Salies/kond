@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Plots</title>
+    <style>
+        #area {
+            padding-left:30px;
+            background-color: #865353;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            max-width: 640px;
+        }
+
+        .bar-area {
+            height:180px;
+            width:640px;
+            background-color: aqua;
+        }
+
+        .avg-line {
+            position: absolute;
+            top:calc(50% - 9px);
+            left: 0;
+            width:100%;
+            background: rgba(255, 0, 0, 0.5);
+        }
+
+        .bar {
+            height:50%;
+            width: 60px;
+            background-color: rgb(16, 133, 64);
+            margin-right:20px;
+            float:left;
+        }
+    </style>
+  </head>
+  <body>
+    <div id="area">
+        <div class="bar-area">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div class="avg-line">
+            Avg
+        </div>
+    </div>
+    <script>
+        /*const refenceValues = {
+            "kpr": 1.4857143,
+            "dpr": 0.4857143,
+            "adr": 109.57143,
+            "impact": 2.593661,
+            "kast": 1.0285714000000001,
+            "rating": 2.1566289,
+        }*/
+
+        const bestValues = {
+            "kpr": 1.2857143,
+            "dpr": 0.2857143,
+            "adr": 104.57143,
+            "impact": 2.093661,
+            "kast": 0.9285714,
+            "rating": 1.9566289,
+        }
+
+        const avg = {
+            "kpr": 0.664285731,
+            "dpr": 0.664285714,
+            "kast": 0.742857143,
+            "impact": 1.006926247,
+            "adr": 72.83571409999999,
+            "rating": 1.045336219
+        }
+
+        const std = {
+            "kpr": 0.21076875906198866,
+            "dpr": 0.15096626561410836,
+            "kast": 0.08043249110215442,
+            "impact": 0.45871921988594216,
+            "adr": 16.890184091266683,
+            "rating": 0.33678706821400617
+        }
+    </script>
+  </body>
+</html>

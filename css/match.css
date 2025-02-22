@@ -1,16 +1,20 @@
 header {
-  margin-bottom: 1rem;
+  padding:2rem;
 }
 
 header > h3:first-of-type {
   padding-top: 1rem;
 }
 
-main {
+header, main, footer {
   margin: 0 auto;
   width: 100%;
   max-width: 40rem;
+}
+
+main {
   padding: 2rem;
+  border-radius: 10px;
   background-color: #282a36;
 }
 
@@ -123,17 +127,21 @@ table {
 .line-title {
   font-size: 1.25rem;
   font-weight: 600;
-  background-color: #6272A4;
+  background-color: #44475a;
   margin-top: 0.5rem;
+  border-radius:5px;
+  margin-bottom: 5px;
+  font-weight: 900;
 }
 
 .line-title,
 .line {
-  padding: 0.5rem;
+  padding: 1rem;
 }
 
 .line {
-  background-color: #44475A;
+  background: hsl(254, 12%, 6%);
+  border-radius: 5px;
 }
 
 .lineups .line {
@@ -147,8 +155,8 @@ table {
 }
 
 .line-player img {
-  width: 120px;
-  height: 120px;
+  width: 108px;
+  height: 108px;
 }
 
 .line-player span {
@@ -158,6 +166,8 @@ table {
   justify-content: center;
   align-items: center;
   gap: 3px;
+  width: 100%;
+  max-width: 108px;
 }
 
 .flag {
@@ -175,14 +185,24 @@ table {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 0.5rem;
-  margin-top: 0.5rem;
-  background-color: #6272A4;
+  padding: 1rem;
+  margin: 0.5rem 0 5px 0;
+  background-color: #44475a;
+  border-radius: 5px;
+  font-weight: 900;
 }
 
 .potm {
-  background-color: #44475A;
-  padding: 0.5rem;
+  background-color: hsl(254, 12%, 6%);
+  padding: 1rem;
+  border-radius: 5px;
+  display: flex;
+  overflow: hidden;
+}
+
+.potm img {
+  width: 164px;
+  height: 164px;
 }
 
 #team-a-score,
@@ -213,4 +233,8 @@ table {
 
 #goat{
   text-decoration: none;
+}
+
+footer {
+  padding:2rem 0;
 }
