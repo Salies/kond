@@ -63,7 +63,7 @@ main {
 }
 
 .tg:first-of-type {
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .tg-team-name {
@@ -75,28 +75,39 @@ main {
 
 .tg-team-name,
 .player-name {
-  padding-left: 0.5rem !important;
+  padding-left: 1rem !important;
 }
 
 .player-name img {
   margin-right: 5px;
 }
 
+table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.even {
+  background-color: RGBA(68, 71, 90, 0.5)
+}
+
 .tg td {
-  border-color: #44475A;
+  /*border-color: #44475A;
   border-style: solid;
   border-width: 1px;
-  font-family: Arial, sans-serif;
-  font-size: 14px;
+  font-family: Arial, sans-serif;*/
+  font-size: 0.9rem;
   overflow: hidden;
   padding: 10px 5px;
   word-break: normal;
 }
+
 .tg th {
-  border-color: #44475A;
+  /*border-color: #44475A;
   border-style: solid;
   border-width: 1px;
-  font-family: Arial, sans-serif;
+  font-family: Arial, sans-serif;*/
+  background-color: #44475A;
   font-size: 14px;
   font-weight: normal;
   overflow: hidden;
@@ -202,4 +213,8 @@ main {
 
 .neutral {
   color: #6272A4;
+}
+
+#goat{
+  text-decoration: none;
 }

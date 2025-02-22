@@ -44,10 +44,6 @@ header {
     font-style: italic;
 }
 
-#goat{
-    text-decoration: none;
-}
-
 .hidden {
     height: 0;
     opacity: 0;

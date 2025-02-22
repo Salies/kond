@@ -43,6 +43,7 @@ function tbodyBuilder(players) {
     return b.rating - a.rating;
   });
 
+  let idx = 0;
   return players
     .map((player) => {
       const playerName = processRealName(
@@ -67,7 +68,12 @@ function tbodyBuilder(players) {
       else if(player.diff < 0)
         colorClass = "loser";
 
-      return `<tr>
+      let idxClass = "odd";
+      if(idx % 2 == 0) idxClass = "even";
+
+      idx++;
+
+      return `<tr class=${idxClass}>
             <td class="player-name">${flag}<a href="${
               player.profile_url
             }" target="_blank">${playerName}</a></td>
