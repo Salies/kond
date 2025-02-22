@@ -1,6 +1,6 @@
 use crate::model::SteamPlayers;
 
-use super::model::{MatchData, MatchDataOut, Player};
+use super::model::{MatchData, MatchDataOut, Player, MatchId};
 use nanoid::nanoid;
 use rusqlite::{params, Connection};
 use std::collections::HashMap;
@@ -125,6 +125,18 @@ pub fn retrieve_match_by_id(conn: &mut Connection, match_id: &str) -> rusqlite::
 
     // Return the populated MatchData
     Ok(match_data)
+}
+
+pub fn retrieve_match_id_by_file_hash(conn: &mut Connection, file_hash: &str) -> rusqlite::Result<MatchId> {
+    let mut stmt = conn.prepare("SELECT id FROM match WHERE hash = ?1")?;
+
+    let match_id = stmt.query_row([file_hash], |row| {
+        Ok(MatchId {
+            id: row.get(0)?,
+        })
+    })?;
+
+    Ok(match_id)
 }
 
 pub async fn get_players_from_steam(players_data: &SteamPlayers) -> Result<HashMap<String, Value>, Box<dyn std::error::Error>> {

@@ -45,3 +45,8 @@ pub struct MatchDataOut {
 pub struct SteamPlayers {
     pub players: Vec<String>,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MatchId {
+    pub id: String,
+}

@@ -9,6 +9,7 @@ use model::SteamPlayers;
 use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
 
+// upload match
 #[post("/upload")]
 async fn upload_data(
     data: web::Json<model::MatchData>,
@@ -26,6 +27,7 @@ async fn upload_data(
     }
 }
 
+// retrieve match by id
 #[get("/matches/{match_id}")]
 async fn retrieve_match(
     path: web::Path<String>,
@@ -43,6 +45,26 @@ async fn retrieve_match(
     }
 }
 
+// try to retrieve match id by demo hash
+#[get("/demo/{demo_hash}")]
+async fn retrieve_match_id_by_file_hash(
+        path: web::Path<String>,
+        pool: web::Data<Pool<SqliteConnectionManager>>,
+    ) -> impl Responder {
+
+    let mut conn = pool.get().expect("Failed to get DB connection");
+    let demo_hash = path.into_inner();
+
+    match service::retrieve_match_id_by_file_hash(&mut *conn, &demo_hash) {
+        Ok(result) => HttpResponse::Ok().json(result),
+        Err(e) => {
+            eprintln!("Database error: {:?}", e);
+            HttpResponse::InternalServerError().finish()
+        }
+    }
+}
+
+// get players data from Steam
 #[post("/players")]
 async fn get_players_from_steam_endpoint(players: web::Json<SteamPlayers>) -> impl Responder {
     match service::get_players_from_steam(&players).await {
@@ -75,6 +97,7 @@ async fn main() -> std::io::Result<()> {
             .service(upload_data)
             .service(retrieve_match)
             .service(get_players_from_steam_endpoint)
+            .service(retrieve_match_id_by_file_hash)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
