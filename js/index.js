@@ -64,7 +64,7 @@ async function processFile(file) {
     const data = new Uint8Array(e.target.result);
     hashwasm.md5(data).then((hash) => {
       // check if demo was already parsed
-      fetch(`http://127.0.0.1:8080/demo/${hash}`)
+      fetch(`${BASE_URL}/demo/${hash}`)
         .then((response) => {
           if (response.ok) {
             return response.json();
@@ -90,7 +90,7 @@ async function processFile(file) {
       demoData.file_hash = hash;
       const body = JSON.stringify(demoData);
 
-      fetch("http://127.0.0.1:8080/upload", {
+      fetch(`${BASE_URL}/upload`, {
         method: "POST",
         body: body,
         headers: { "Content-Type": "application/json" },

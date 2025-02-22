@@ -140,7 +140,7 @@ function getTeamsTbody(teamA, teamB) {
   return [teamATbody, teamBTbody];
 }
 
-fetch(`http://127.0.0.1:8080/matches/${matchId}`)
+fetch(`${BASE_URL}/matches/${matchId}`)
   .then((response) => {
     if (response.ok) {
       return response.json();
@@ -214,7 +214,7 @@ fetch(`http://127.0.0.1:8080/matches/${matchId}`)
 
     // get data from steam
     const steamIds = Object.keys(match.player_data);
-    fetch(`http://127.0.0.1:8080/players`, {
+    fetch(`${BASE_URL}/players`, {
       method: "POST",
       body: JSON.stringify({ players: steamIds }),
       headers: { "Content-Type": "application/json" },
