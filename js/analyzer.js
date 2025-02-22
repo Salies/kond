@@ -112,18 +112,6 @@ function parseDemo(data) {
         teamBOvertimeRoundsWon = teamBRounds - 12;
     }
 
-    /*matchData.set("teamAName", teamAData.get("team_name"));
-    matchData.set("teamBName", teamBData.get("team_name"));
-    matchData.set("teamAPoints", teamAData.get("team_rounds_total"));
-    matchData.set("teamBPoints", teamBData.get("team_rounds_total"));
-    matchData.set("teamAScoreFirstHalf", teamAData.get("team_score_first_half"));
-    matchData.set("teamBScoreFirstHalf", teamBData.get("team_score_first_half"));
-    matchData.set("teamAScoreSecondHalf", teamAData.get("team_score_second_half"));
-    matchData.set("teamBScoreSecondHalf", teamBData.get("team_score_second_half"));
-    matchData.set("teamAOvertimeRoundsWon", teamAOvertimeRoundsWon);
-    matchData.set("teamBOvertimeRoundsWon", teamBOvertimeRoundsWon);
-    matchData.set("playerData", playerOutput);*/
-
     matchData.team_a_name = teamAData.get("team_name");
     matchData.team_b_name = teamBData.get("team_name");
     matchData.team_a_score = teamAData.get("team_rounds_total");

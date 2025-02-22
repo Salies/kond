@@ -5,8 +5,6 @@ if (!matchId) {
   window.location.href = "/";
 }
 
-console.log(matchId);
-
 function fillArray(n, startWord) {
   //const opposite = startWord == "ct" ? "terror" : "ct";
   let array = new Array(n);
@@ -185,8 +183,6 @@ fetch(`http://127.0.0.1:8080/matches/${matchId}`)
     let finalColor = teamB[0].final_team == 2 ? "terror" : "ct";
     halfScoresColors = fillArray(j, finalColor).concat(halfScoresColors);
 
-    console.log(halfScoresColors)
-
     let halfScoresHtml = "(";
     halfScoresHtml += `<span class="${halfScoresColors[0]}">${halfScores[0]}</span>;`;
     halfScoresHtml += `<span class="${halfScoresColors[1]}">${halfScores[1]}</span>)`;
@@ -226,8 +222,6 @@ fetch(`http://127.0.0.1:8080/matches/${matchId}`)
           match.player_data[player.steamid].profile_url = player.profileurl;
           match.player_data[player.steamid].real_name = player.realname;
         }
-
-        console.log(match.player_data);
 
         const teamsTbody = getTeamsTbody(teamA, teamB);
         $("#team-a-players").innerHTML = teamsTbody[0];
@@ -271,5 +265,5 @@ fetch(`http://127.0.0.1:8080/matches/${matchId}`)
   })
   .catch((error) => {
     console.error(error);
-    //window.location.href = "/";
+    window.location.href = "/";
   });

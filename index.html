@@ -5,16 +5,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="kond - the hemophile demo analyzer">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="stylesheet" type="text/css" href="css/loader.css">
     <link rel="icon" type="image/png" href="img/favicon.ico">
 </head>
 <body>
     <main>
         <header>
             <h1>kond</h1>
-            <h2>the hemophile demo analyzer</h2>
+            <h2>the <a href="" target="_blank" id="goat">🐐</a> demo analyzer</h2>
         </header>
         <div
             class="file-area"
@@ -24,15 +26,21 @@
         >
             drop your demo here
         </div>
-        <div class="loading-area">
-            <div class="loading-bar"></div>
-            <div class="loading-text">waiting...</div>
+        <div class="loading-area" id="insert-file-area">
+            <div class="loading-text">
+                or upload here
+                <input type="file" id="demoFile" />
+            </div>
         </div>
-        <input type="file" id="demoFile" />
+        <div class="hidden" id="loading-bar">
+            <div class="lds-facebook"><div></div><div></div><div></div></div>
+        </div>
     </main>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="js/lib/demoparser2.js"></script>
     <script src="js/lib/md5.umd.min.js"></script>
     <script src="js/analyzer.js"></script>
     <script src="js/index.js"></script>
+    <script src="js/goat.js"></script>
 </body>
 </html>
