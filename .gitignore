@@ -142,3 +142,5 @@ env
 .vscode
 proto
 kond
+
+kond-api-test
