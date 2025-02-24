@@ -20,8 +20,6 @@ function updatePotm(bestValues, avg, std) {
 
   const refs = Object.keys(bestValues);
 
-  console.log(data);
-
   // Get the chart container
   const chart = document.getElementById("chart");
   const legend = document.getElementById("legend");

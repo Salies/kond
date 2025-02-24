@@ -101,7 +101,6 @@ async function processFile(file) {
         })
         .then((data) => {
           parsingSuccessToast();
-          console.log("Parsed JSON:", data);
           const matchId = data.id;
           // redirect to /match?id=matchId
           window.location.href = `./match?id=${matchId}`;

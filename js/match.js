@@ -14,8 +14,6 @@ fetch(`${BASE_URL}/matches/${matchId}`)
     }
   })
   .then((match) => {
-    console.log(match);
-
     $("#match-id").innerText = matchId;
     $("#file-hash").innerText = match.file_hash;
     const matchAddedDate = new Date(match.created_at).toLocaleString();
@@ -131,8 +129,6 @@ fetch(`${BASE_URL}/matches/${matchId}`)
         avgs.adr /= players.length;
         avgs.rating /= players.length;
 
-        console.log('avg', avgs);
-
         const teamsTbody = getTeamsTbody(teamA, teamB);
         $("#team-a-players").innerHTML = teamsTbody[0];
         $("#team-b-players").innerHTML = teamsTbody[1];
@@ -167,10 +163,6 @@ fetch(`${BASE_URL}/matches/${matchId}`)
         std.impact = Math.sqrt(std.impact / players.length);
         std.adr = Math.sqrt(std.adr / players.length);
         std.rating = Math.sqrt(std.rating / players.length);
-
-        console.log('best', bestPlayer)
-
-        console.log('std', std)
 
         updatePotm({
           kpr: bestPlayer.kpr,
