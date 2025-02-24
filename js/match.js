@@ -2,7 +2,7 @@ const $ = document.querySelector.bind(document);
 
 const matchId = new URLSearchParams(window.location.search).get("id");
 if (!matchId) {
-  window.location.href = "/";
+  window.location.href = "./";
 }
 
 fetch(`${BASE_URL}/matches/${matchId}`)
@@ -204,5 +204,5 @@ fetch(`${BASE_URL}/matches/${matchId}`)
   })
   .catch((error) => {
     console.error(error);
-    window.location.href = "/";
+    window.location.href = "./";
   });
