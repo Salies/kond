@@ -75,7 +75,7 @@ async function processFile(file) {
         .then((data) => {
           const matchId = data.id;
           // redirect to /match?id=matchId
-          window.location.href = `/match?id=${matchId}`;
+          window.location.href = `./match?id=${matchId}`;
         });
       // no need to catch error, we just proceed to parse the demo
 
@@ -104,7 +104,7 @@ async function processFile(file) {
           console.log("Parsed JSON:", data);
           const matchId = data.id;
           // redirect to /match?id=matchId
-          window.location.href = `/match?id=${matchId}`;
+          window.location.href = `./match?id=${matchId}`;
         })
         .catch((error) => {
           console.error("API Error:", error);
